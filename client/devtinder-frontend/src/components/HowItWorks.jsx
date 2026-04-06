@@ -1,0 +1,37 @@
+export default function HowItWorks() {
+  const steps = [
+    { number: "01", title: "Create Your Profile", desc: "Add skills & interests." },
+    { number: "02", title: "Swipe & Match", desc: "Swipe right to connect." },
+    { number: "03", title: "Chat & Build", desc: "Collaborate instantly." },
+  ];
+
+  return (
+    <section className="py-24">
+      <div className="max-w-6xl mx-auto px-6 text-center">
+        <h2 className="text-4xl font-bold">
+          How It{" "}
+          <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+            Works
+          </span>
+        </h2>
+
+        <p className="text-gray-400 mt-4">
+          Three simple steps to your next collaboration.
+        </p>
+
+        <div className="mt-16 grid md:grid-cols-3 gap-8">
+          {steps.map((step) => (
+            <div
+              key={step.number}
+              className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
+            >
+              <h3 className="text-5xl font-bold text-purple-500">{step.number}</h3>
+              <h4 className="mt-6 text-xl font-semibold">{step.title}</h4>
+              <p className="text-gray-400 mt-4">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

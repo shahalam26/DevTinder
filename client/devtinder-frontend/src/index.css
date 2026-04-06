@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Enable dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Smooth transition for everything */
+*,
+*::before,
+*::after {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
+
+body {
+  @apply bg-white text-black dark:bg-black dark:text-white;
+}

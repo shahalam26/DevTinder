@@ -1,0 +1,22 @@
+npm init is the command that is used to initialize node project it basically creates a folder package.json that keep tracks of all usefull information such as meta data dependencies packages and all
+^ allow project updates minor and patch update 
+~allow only patch updates
+
+app.use() is used to register middleware in an Express application.
+
+👉 Middleware = functions that run between request and response.
+
+Think of a request like this:
+
+Client → [ middleware ] → [ route handler ] → Response
+
+
+app.use() decides what runs in the middle.
+A request handler is any function that processes an incoming request in Express, including middleware and route handlers. A route handler is a specific type of request handler that is bound to a particular HTTP method and path and usually sends the final response.
+
+difference between js object and json
+
+difference bw patch and put
+
+by default validate function only works for the first time not on updating
+this keyword in arrow functions
