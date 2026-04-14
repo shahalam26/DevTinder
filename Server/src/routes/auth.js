@@ -75,8 +75,8 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "lax", 
-      secure: process.env.NODE_ENV === "production"
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
+      secure: process.env.NODE_ENV === "production" || true
     });
 
     res.status(200).json({ message: "Account created successfully!", token });
@@ -140,8 +140,8 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "lax", // ✅ IMPORTANT
-      secure: process.env.NODE_ENV === "production"
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ IMPORTANT for cross-domain
+      secure: process.env.NODE_ENV === "production" || true
     });
 
     res.send("Login successful");
@@ -154,8 +154,8 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post('/logout', (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production" || true,
         path: "/",
     });
     res.send("logout successful");
