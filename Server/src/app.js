@@ -30,7 +30,7 @@ app.set("trust proxy", 1);
 
 // ✅ CORS (IMPORTANT)
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: [process.env.CLIENT_URL, "http://localhost:5173", "https://dev-tinder-orpin.vercel.app"],
   credentials: true
 }));
 
