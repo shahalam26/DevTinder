@@ -15,8 +15,14 @@ profileRouter.get("/profile/view",authMiddleware, async (req, res) => {
 });
 profileRouter.patch("/profile/edit",authMiddleware, async (req, res) => {
  try{
-  const allowedUpdates=["firstName","lastName","age","skills"];
-
+ const allowedUpdates = [
+  "firstName",
+  "lastName",
+  "age",
+  "skills",
+  "about",
+  "photourl" // ✅ ADD
+];
   const updates=Object.keys(req.body);
 
   const isValidUpdate=updates.every((field)=>

@@ -15,7 +15,7 @@ const Feed = () => {
   const startY = useRef(0);
   const isHorizontal = useRef(null);
 
-  // Use an effect to handle the initial data fetch
+  // ✅ FETCH FEED
   useEffect(() => {
     let isMounted = true;
 
@@ -23,11 +23,13 @@ const Feed = () => {
       try {
         const res = await api.get("/feed");
         if (isMounted) {
-          const userData = Array.isArray(res.data?.data) ? res.data.data : [];
+          const userData = Array.isArray(res.data?.data)
+            ? res.data.data
+            : [];
           setUsers(userData);
         }
       } catch (err) {
-        if (isMounted) console.error("Error fetching feed:", err);
+        console.error("Error fetching feed:", err);
       }
     };
 
@@ -36,32 +38,37 @@ const Feed = () => {
     return () => {
       isMounted = false;
     };
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
+  // 🔥 MAIN ACTION HANDLER
   const handleAction = async (direction) => {
-  if (animation) return;
+    if (animation) return;
 
-  const user = users[currentIndex];
+    const user = users[currentIndex];
+    if (!user) return;
 
-  try {
-    if (direction === "right") {
-      await api.post("/request/send", {
-        toUserId: user._id,
-      });
+    try {
+      if (direction === "right") {
+        // ✅ CONNECT
+        await api.post(`/request/${user._id}`);
+      }
+      // ❌ left swipe → skip only
+    } catch (err) {
+      console.error("Action error:", err);
     }
-  } catch (err) {
-    console.error(err);
-  }
 
-  setAnimation(direction);
-  setDragX(direction === "right" ? 600 : -600);
+    // 🔥 animate card
+    setAnimation(direction);
+    setDragX(direction === "right" ? 600 : -600);
 
-  setTimeout(() => {
-    setCurrentIndex((prev) => prev + 1);
-    setAnimation("");
-    setDragX(0);
-  }, 300);
-};
+    setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1);
+      setAnimation("");
+      setDragX(0);
+    }, 300);
+  };
+
+  // 👉 POINTER DOWN
   const onPointerDown = (e) => {
     startX.current = e.clientX;
     startY.current = e.clientY;
@@ -70,6 +77,7 @@ const Feed = () => {
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
+  // 👉 POINTER MOVE
   const onPointerMove = (e) => {
     if (!isDragging || animation) return;
 
@@ -88,6 +96,7 @@ const Feed = () => {
     }
   };
 
+  // 👉 POINTER UP
   const onPointerUp = () => {
     if (!isDragging) return;
     setIsDragging(false);
@@ -107,19 +116,25 @@ const Feed = () => {
   const rotation = dragX * 0.08;
   const opacity = Math.max(0.5, 1 - Math.abs(dragX) / 400);
 
+  // ✅ EMPTY STATE
   if (!currentUser) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <h2 className="text-2xl font-bold text-gray-500">
-          No more developers nearby
-        </h2>
+      <div className="page-section flex min-h-[70vh] items-center justify-center px-4">
+        <div className="page-card max-w-xl p-10 text-center">
+          <h2 className="page-title">No more developers nearby</h2>
+          <p className="page-subtitle mt-3">
+            Check back soon or update your profile to improve your matches.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen overflow-hidden">
-      <div className="relative">
+    <div className="page-section flex min-h-[75vh] items-center justify-center overflow-hidden px-4 py-8">
+      <div className="relative w-full max-w-[380px]">
+
+        {/* NEXT CARD */}
         {nextUser && (
           <div className="absolute inset-0 scale-95 opacity-60 pointer-events-none">
             <ProfileCard
@@ -134,12 +149,15 @@ const Feed = () => {
           </div>
         )}
 
+        {/* CURRENT CARD */}
         <div
           className="relative touch-none cursor-grab active:cursor-grabbing"
           style={{
             transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
             opacity: animation ? 0 : opacity,
-            transition: isDragging ? "none" : "transform 0.3s ease, opacity 0.3s ease"
+            transition: isDragging
+              ? "none"
+              : "transform 0.3s ease, opacity 0.3s ease",
           }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -156,6 +174,7 @@ const Feed = () => {
             onConnect={() => handleAction("right")}
           />
         </div>
+
       </div>
     </div>
   );

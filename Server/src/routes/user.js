@@ -6,7 +6,7 @@ const User = require("../models/user");
 
 const USER_SAFE_DATA = "firstName lastName photourl age gender about skills";
 
-userRouter.get("/user/requests/recieved", authMiddleware, async (req, res) => {
+const getPendingRequests = async (req, res) => {
   try {
     const loggedInUser = req.user;
     const requests = await ConnectionRequest.find({
@@ -22,7 +22,10 @@ userRouter.get("/user/requests/recieved", authMiddleware, async (req, res) => {
       message: err.message,
     });
   }
-});
+};
+
+userRouter.get("/user/requests/received", authMiddleware, getPendingRequests);
+userRouter.get("/user/requests/recieved", authMiddleware, getPendingRequests);
 
 userRouter.get("/user/connections", authMiddleware, async (req, res) => {
   try {

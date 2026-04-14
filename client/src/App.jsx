@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { Toaster } from 'react-hot-toast';
 
 import Body from "./layout/Body";
 import Landing from "./pages/Landing";
@@ -8,58 +8,124 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
+import Requests from "./pages/Requests";
+import Matches from "./pages/Matches";
+import ChatsList from "./pages/ChatsList";
+import Chat from "./pages/Chat";
+import ChatLayout from "./pages/ChatLayout";
+import { SocketProvider } from "./utils/SocketContext";
+
+import api from "./utils/api";
 
 function App() {
   const [auth, setAuth] = useState(false);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Configure axios to always send cookies
-  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        // Change the URL to your actual backend URL
-        await axios.get("http://localhost:4000/viewProfile");
+        const res = await api.get("/me");
         setAuth(true);
-      } catch  {
+        setUser(res.data);
+      } catch {
         setAuth(false);
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
+
     checkStatus();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  const refreshAuth = async () => {
+    try {
+      const res = await api.get("/me");
+      setAuth(true);
+      setUser(res.data);
+      return res.data;
+    } catch {
+      setAuth(false);
+      setUser(null);
+      return null;
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/logout");
+    } finally {
+      setAuth(false);
+      setUser(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-6 text-center text-slate-600 dark:text-slate-300">
+        Loading your workspace...
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        {/* Public */}
+        {/* PUBLIC */}
         <Route
           path="/"
-          element={!auth ? <Landing /> : <Navigate to="/feed" replace />}
+          element={
+            !auth ? (
+              <Landing user={user} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/feed" replace />
+            )
+          }
         />
-        
-        {/* Login - Pass setAuth so Login.js can update App state */}
+
         <Route
           path="/login"
-          element={!auth ? <Login setAuth={setAuth} /> : <Navigate to="/feed" replace />}
+          element={
+            !auth ? (
+              <Login refreshAuth={refreshAuth} />
+            ) : (
+              <Navigate to="/feed" replace />
+            )
+          }
         />
 
-        <Route path="/signup" element={<Signup />} />
-
-        {/* Protected */}
         <Route
-          path="/feed"
-          element={auth ? <Body /> : <Navigate to="/" replace />}
+          path="/signup"
+          element={!auth ? <Signup refreshAuth={refreshAuth} /> : <Navigate to="/feed" replace />}
+        />
+
+
+
+        {/* PROTECTED LAYOUT */}
+        <Route
+          path="/"
+          element={
+            auth ? (
+              <SocketProvider user={user}>
+                <Body user={user} onLogout={handleLogout} />
+              </SocketProvider>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
         >
-          <Route index element={<Feed />} />
+          <Route path="feed" element={<Feed />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="requests" element={<Requests />} />
+          <Route path="matches" element={<Matches />} />
+          <Route path="chats" element={<ChatLayout user={user} />}>
+             <Route path=":targetUserId" element={<Chat user={user} />} />
+          </Route>
         </Route>
 
-        {/* Catch-all */}
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

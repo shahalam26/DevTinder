@@ -35,45 +35,62 @@ const userSchema = new mongoose.Schema(
 
     age: {
       type: Number,
-      required:false,
       min: 18,
       max: 100
     },
-    gender:{
-     type:String,
-     required:false
+
+    gender: {
+      type: String
     },
+
+    about: {
+      type: String,
+      default: ""
+    },
+
+    photourl: {
+      type: String,
+      default: ""
+    },
+
     password: {
       type: String,
       required: true,
       minlength: 6,
+      select: false,
       validate(value) {
-        if (value.toLowerCase().includes("password")) {
+        if (value && value.toLowerCase().includes("password")) {
           throw new Error("Password cannot contain the word 'password'");
         }
-      },
-      select: false
+      }
     },
-    skills:{
-        type:[String],
-        default:[],
-        validate(skills){
-            if (skills.length>10){
-                throw new Error("you can add max 10 skills")
-            }
-        }
 
+    skills: {
+      type: [String],
+      default: [],
+      validate(skills) {
+        if (skills.length > 10) {
+          throw new Error("you can add max 10 skills");
+        }
+      }
+    },
+    isOnline: {
+      type: Boolean,
+      default: false
+    },
+    lastSeen: {
+      type: Date,
+      default: Date.now
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-userSchema.pre("save",async function (next){
-  if (!this.isModified("password")) return;
-  this.password=await bcrypt.hash(this.password,10);
- 
-})
+// 🔐 hash password
+userSchema.pre("save", async function () {
+  if (!this.isModified("password") || !this.password) return;
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
 const User = mongoose.model("User", userSchema);
 module.exports = User;

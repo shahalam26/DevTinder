@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="relative pt-40 pb-24 overflow-hidden">
+    <section className="relative overflow-hidden pb-20 pt-28 sm:pb-24 sm:pt-36">
 
       {/* Gradient Glow Layer */}
       <div
@@ -12,20 +12,20 @@ export default function Hero() {
       "
       />
 
-      <div className="relative max-w-5xl mx-auto text-center px-6">
+      <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
 
         {/* Tech Tags */}
-        <div className="flex justify-center gap-4 mb-6">
-          <span className="px-4 py-1 text-sm rounded-full bg-gray-100 border border-gray-200 dark:bg-white/5 dark:border-white/10">
+        <div className="mb-6 flex flex-wrap justify-center gap-3">
+          <span className="rounded-full border border-gray-200 bg-gray-100 px-4 py-1 text-sm dark:border-white/10 dark:bg-white/5">
             React
           </span>
-          <span className="px-4 py-1 text-sm rounded-full bg-gray-100 border border-gray-200 dark:bg-white/5 dark:border-white/10">
+          <span className="rounded-full border border-gray-200 bg-gray-100 px-4 py-1 text-sm dark:border-white/10 dark:bg-white/5">
             TypeScript
           </span>
         </div>
 
         {/* Heading */}
-        <h1 className="text-5xl md:text-7xl font-bold leading-tight text-black dark:text-white">
+        <h1 className="text-4xl font-bold leading-tight text-black dark:text-white sm:text-5xl md:text-7xl">
           Swipe.{" "}
           <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
             Match.
@@ -34,24 +34,24 @@ export default function Hero() {
           Ship Together.
         </h1>
 
-        <p className="mt-6 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+        <p className="mx-auto mt-6 max-w-2xl text-base text-gray-600 dark:text-gray-400 sm:text-lg">
           DevTinder connects you with developers who share your passion,
           complement your skills, and are ready to build something amazing.
         </p>
 
         {/* Buttons */}
-        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <button className="px-8 py-4 rounded-full text-lg font-medium bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:scale-105 transition-all duration-300">
+        <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+          <button className="rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 text-base font-medium text-white transition-all duration-300 hover:scale-105 sm:px-8 sm:py-4 sm:text-lg">
             Start Swiping →
           </button>
 
-          <button className="px-8 py-4 rounded-full border border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 transition-all duration-300">
+          <button className="rounded-full border border-gray-300 bg-gray-100 px-6 py-3 transition-all duration-300 hover:bg-gray-200 dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 sm:px-8 sm:py-4">
             Continue with GitHub
           </button>
         </div>
 
         {/* Stats */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="mt-14 grid grid-cols-2 gap-6 sm:mt-16 md:grid-cols-4 md:gap-8">
           <Stat number="50K+" label="Developers" />
           <Stat number="120K+" label="Connections" />
           <Stat number="8K+" label="Projects Built" />

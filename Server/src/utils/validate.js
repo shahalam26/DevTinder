@@ -11,6 +11,15 @@ const signUpValidation = async (req) => {
  
   if (!emailId || !validator.isEmail(emailId)) {
     errors.push("Invalid email");
+  } else {
+    try {
+      const user = await User.findOne({ emailId: emailId.toLowerCase() });
+      if (user) {
+        errors.push("Email already exists. Try logging in.");
+      }
+    } catch (err) {
+      errors.push("Database error while checking email.");
+    }
   }
 
   if (!firstName || firstName.length < 2) {
@@ -19,10 +28,6 @@ const signUpValidation = async (req) => {
 
   if (!lastName || lastName.length < 2) {
     errors.push("Invalid last name");
-  }
- const user=await User.findOne({emailId})
-  if(user){
-    errors.push("email already exist try using, new emailId")
   }
   if (!password) {
     errors.push("Password is required");

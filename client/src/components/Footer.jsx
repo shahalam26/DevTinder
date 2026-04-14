@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 py-8 text-center text-gray-500">
+    <footer className="border-t border-slate-200/70 py-8 text-center text-slate-500 dark:border-white/10 dark:text-slate-400">
       ❤ DevTinder — Built for Developers
     </footer>
   );
