@@ -29,7 +29,8 @@ oauthRouter.get('/auth/github', (req, res) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
   if (!clientId) return res.status(500).send("GitHub Auth is not configured");
   
-  const redirectUri = `http://localhost:${process.env.PORT || 3000}/auth/github/callback`;
+  const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const redirectUri = `${BACKEND_URL}/auth/github/callback`;
   const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
   res.redirect(url);
 });
@@ -94,7 +95,8 @@ oauthRouter.get('/auth/google', (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) return res.redirect(`${FRONTEND_URL}/login?error=not_configured`);
   
-  const redirectUri = `http://localhost:${process.env.PORT || 3000}/auth/google/callback`;
+  const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const redirectUri = `${BACKEND_URL}/auth/google/callback`;
   const scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline`;
   res.redirect(url);
@@ -102,7 +104,8 @@ oauthRouter.get('/auth/google', (req, res) => {
 
 oauthRouter.get('/auth/google/callback', async (req, res) => {
   const { code } = req.query;
-  const redirectUri = `http://localhost:${process.env.PORT || 3000}/auth/google/callback`;
+  const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const redirectUri = `${BACKEND_URL}/auth/google/callback`;
 
   try {
     const { data } = await axios.post('https://oauth2.googleapis.com/token', {
