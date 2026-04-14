@@ -111,7 +111,10 @@ const ChatsList = ({ contained = false, user: currentUser }) => {
               className={`flex items-center gap-4 cursor-pointer p-4 sm:p-5 rounded-2xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-200/60 dark:border-slate-800/60 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-pink-500/10 hover:border-pink-300/60 dark:hover:border-pink-500/30 group relative overflow-hidden animate-in fade-in zoom-in-95 duration-300 ${contained ? 'border-none shadow-none rounded-none border-b hover:bg-slate-50 dark:hover:bg-slate-800' : ''}`}
             >
               {/* Avatar */}
-              <div className="relative h-14 w-14 flex-shrink-0 rounded-full bg-gradient-to-br from-pink-100 to-violet-100 dark:from-slate-800 dark:to-slate-900 border-2 border-transparent group-hover:border-pink-100 dark:group-hover:border-slate-700 transition-colors">
+              <div 
+                onClick={(e) => { e.stopPropagation(); navigate(`/user/${partner._id}`); }}
+                className="relative h-14 w-14 flex-shrink-0 cursor-pointer rounded-full bg-gradient-to-br from-pink-100 to-violet-100 dark:from-slate-800 dark:to-slate-900 border-2 border-transparent hover:border-pink-500 hover:scale-105 transition-all z-10"
+              >
                 {partner.photourl ? (
                   <img
                     src={partner.photourl}

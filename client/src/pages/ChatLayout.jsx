@@ -8,7 +8,7 @@ const ChatLayout = ({ user }) => {
   const isInChat = !!targetUserId;
 
   return (
-    <div className="flex w-full h-[calc(100vh-6rem)] overflow-hidden bg-slate-50 dark:bg-[#0f172a]">
+    <div className="fixed inset-0 top-[64px] md:pb-0 pb-[70px] flex w-full overflow-hidden bg-slate-50 dark:bg-[#0f172a] z-20">
       {/* Sidebar - Contacts List */}
       <div 
         className={`w-full md:w-[350px] lg:w-[400px] border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0 transition-all duration-300 ${

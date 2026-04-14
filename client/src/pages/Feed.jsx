@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import api from "../utils/api";
 import ProfileCard from "../components/ProfileCard";
+import toast from "react-hot-toast";
 
 const SWIPE_THRESHOLD = 80;
 
@@ -50,11 +51,22 @@ const Feed = () => {
     try {
       if (direction === "right") {
         // ✅ CONNECT
-        await api.post(`/request/${user._id}`);
+        const res = await api.post(`/request/${user._id}`);
+        if (res.data?.message?.includes("match") || res.data?.message?.includes("Match") || res.data?.message?.includes("🎉")) {
+          toast.success(`It's a Match with ${user.firstName}! 🎉`, {
+            duration: 4000,
+            icon: '🔥',
+          });
+        } else {
+          toast.success("Request sent!");
+        }
       }
       // ❌ left swipe → skip only
     } catch (err) {
       console.error("Action error:", err);
+      if (err.response?.data?.message) {
+         toast.error(err.response.data.message);
+      }
     }
 
     // 🔥 animate card
@@ -145,6 +157,7 @@ const Feed = () => {
               image={nextUser.photourl}
               onReject={() => {}}
               onConnect={() => {}}
+              dragOffset={0}
             />
           </div>
         )}
@@ -172,6 +185,7 @@ const Feed = () => {
             image={currentUser.photourl}
             onReject={() => handleAction("left")}
             onConnect={() => handleAction("right")}
+            dragOffset={dragX}
           />
         </div>
 

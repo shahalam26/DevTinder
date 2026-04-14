@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import api from "../utils/api";
+import { useOutletContext } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Profile = () => {
@@ -22,6 +23,8 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
 
   const fileInputRef = useRef(null);
+  const context = typeof useOutletContext === 'function' ? useOutletContext() : null;
+  const setUser = context ? context.setUser : null;
   const displayImage = tempImage || profile.photourl;
 
   // ✅ FETCH PROFILE
@@ -112,10 +115,16 @@ const Profile = () => {
       await api.patch("/profile/edit", payload);
 
       // 🔥 update only AFTER save
-      setProfile((prev) => ({
-        ...prev,
-        photourl: finalImage
-      }));
+      setProfile((prev) => {
+        const newProfileState = {
+          ...prev,
+          photourl: finalImage
+        };
+        if (setUser) {
+           setUser(current => ({ ...current, ...newProfileState }));
+        }
+        return newProfileState;
+      });
 
       setTempImage(null);
 

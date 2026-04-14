@@ -95,4 +95,20 @@ userRouter.get("/feed", authMiddleware, async (req, res) => {
   }
 });
 
+userRouter.get("/user/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select(USER_SAFE_DATA);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ message: "Invalid User ID or internal error" });
+  }
+});
+
+
 module.exports = userRouter;

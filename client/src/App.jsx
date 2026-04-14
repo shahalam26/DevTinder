@@ -1,18 +1,24 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Toaster } from 'react-hot-toast';
 
+import ErrorBoundary from "./components/ErrorBoundary";
+import Loader from "./components/Loader";
+
 import Body from "./layout/Body";
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Feed from "./pages/Feed";
-import Profile from "./pages/Profile";
-import Requests from "./pages/Requests";
-import Matches from "./pages/Matches";
-import ChatsList from "./pages/ChatsList";
-import Chat from "./pages/Chat";
-import ChatLayout from "./pages/ChatLayout";
+
+const Landing = lazy(() => import("./pages/Landing"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Forgot = lazy(() => import("./pages/Forgot"));
+const Feed = lazy(() => import("./pages/Feed"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Requests = lazy(() => import("./pages/Requests"));
+const Matches = lazy(() => import("./pages/Matches"));
+const ChatsList = lazy(() => import("./pages/ChatsList"));
+const Chat = lazy(() => import("./pages/Chat"));
+const ChatLayout = lazy(() => import("./pages/ChatLayout"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
 import { SocketProvider } from "./utils/SocketContext";
 
 import api from "./utils/api";
@@ -70,9 +76,11 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Toaster position="top-center" reverseOrder={false} />
-      <Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Toaster position="top-center" reverseOrder={false} />
+        <Suspense fallback={<Loader />}>
+          <Routes>
         {/* PUBLIC */}
         <Route
           path="/"
@@ -101,6 +109,11 @@ function App() {
           element={!auth ? <Signup refreshAuth={refreshAuth} /> : <Navigate to="/feed" replace />}
         />
 
+        <Route
+          path="/forgot"
+          element={!auth ? <Forgot /> : <Navigate to="/feed" replace />}
+        />
+
 
 
         {/* PROTECTED LAYOUT */}
@@ -109,7 +122,7 @@ function App() {
           element={
             auth ? (
               <SocketProvider user={user}>
-                <Body user={user} onLogout={handleLogout} />
+                <Body user={user} setUser={setUser} onLogout={handleLogout} />
               </SocketProvider>
             ) : (
               <Navigate to="/login" replace />
@@ -123,12 +136,15 @@ function App() {
           <Route path="chats" element={<ChatLayout user={user} />}>
              <Route path=":targetUserId" element={<Chat user={user} />} />
           </Route>
+          <Route path="user/:userId" element={<UserProfile />} />
         </Route>
 
         {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

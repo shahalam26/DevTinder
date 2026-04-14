@@ -236,7 +236,10 @@ const Chat = ({ user }) => {
             <button onClick={() => navigate('/chats')} className="md:hidden p-2 -ml-2 text-slate-400 hover:text-pink-500 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600">
+            <div 
+              onClick={() => navigate(`/user/${targetUserId}`)}
+              className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 cursor-pointer hover:ring-2 ring-pink-500 transition-all"
+            >
                 {targetUser?.photourl ? (
                   <img src={targetUser.photourl} alt="avatar" className="h-full w-full rounded-full object-cover" />
                 ) : (
@@ -246,7 +249,7 @@ const Chat = ({ user }) => {
                 )}
                 {targetPresence.isOnline && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900"></span>}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col cursor-pointer hover:opacity-80" onClick={() => navigate(`/user/${targetUserId}`)}>
               <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 leading-tight">
                  {targetUser ? `${targetUser.firstName} ${targetUser.lastName}` : "Loading..."}
               </h2>
