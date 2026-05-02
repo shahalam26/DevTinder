@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import Loader from "./components/Loader";
+import Shimmer from "./components/Shimmer";
 
 import Body from "./layout/Body";
 
@@ -68,11 +69,7 @@ function App() {
   };
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-6 text-center text-slate-600 dark:text-slate-300">
-        Loading your workspace...
-      </div>
-    );
+    return <Shimmer />;
   }
 
   return (

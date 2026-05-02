@@ -7,7 +7,17 @@ const User = require('../models/user');
 
 const oauthRouter = express.Router();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const getFrontendUrl = (req) => {
+  const host = req.get('host') || "";
+  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+    return "http://localhost:5173";
+  }
+  return process.env.FRONTEND_URL || process.env.CLIENT_URL || "https://dev-tinder-orpin.vercel.app";
+};
+
+const getBackendUrl = (req) => {
+  return `${req.protocol}://${req.get('host')}`;
+};
 
 // Generate generic JWT and set cookie
 const loginUser = (res, user) => {
@@ -30,7 +40,7 @@ oauthRouter.get('/auth/github', (req, res) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
   if (!clientId) return res.status(500).send("GitHub Auth is not configured");
   
-  const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const BACKEND_URL = getBackendUrl(req);
   const redirectUri = `${BACKEND_URL}/auth/github/callback`;
   const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
   res.redirect(url);
@@ -48,7 +58,7 @@ oauthRouter.get('/auth/github/callback', async (req, res) => {
     });
 
     const accessToken = data.access_token;
-    if (!accessToken) return res.redirect(`${FRONTEND_URL}/login?error=true`);
+    if (!accessToken) return res.redirect(`${getFrontendUrl(req)}/login?error=true`);
 
     const userRes = await axios.get('https://api.github.com/user', {
       headers: { Authorization: `Bearer ${accessToken}` }
@@ -84,19 +94,19 @@ oauthRouter.get('/auth/github/callback', async (req, res) => {
     }
 
     loginUser(res, user);
-    res.redirect(`${FRONTEND_URL}/feed`);
+    res.redirect(`${getFrontendUrl(req)}/feed`);
   } catch (error) {
     console.error("GitHub Auth Error:", error.message);
-    res.redirect(`${FRONTEND_URL}/login?error=github`);
+    res.redirect(`${getFrontendUrl(req)}/login?error=github`);
   }
 });
 
 // --- GOOGLE OAUTH ---
 oauthRouter.get('/auth/google', (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  if (!clientId) return res.redirect(`${FRONTEND_URL}/login?error=not_configured`);
+  if (!clientId) return res.redirect(`${getFrontendUrl(req)}/login?error=not_configured`);
   
-  const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const BACKEND_URL = getBackendUrl(req);
   const redirectUri = `${BACKEND_URL}/auth/google/callback`;
   const scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline`;
@@ -105,7 +115,7 @@ oauthRouter.get('/auth/google', (req, res) => {
 
 oauthRouter.get('/auth/google/callback', async (req, res) => {
   const { code } = req.query;
-  const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const BACKEND_URL = getBackendUrl(req);
   const redirectUri = `${BACKEND_URL}/auth/google/callback`;
 
   try {
@@ -138,10 +148,10 @@ oauthRouter.get('/auth/google/callback', async (req, res) => {
     }
 
     loginUser(res, user);
-    res.redirect(`${FRONTEND_URL}/feed`);
+    res.redirect(`${getFrontendUrl(req)}/feed`);
   } catch (error) {
     console.error("Google Auth Error:", error.message);
-    res.redirect(`${FRONTEND_URL}/login?error=google`);
+    res.redirect(`${getFrontendUrl(req)}/login?error=google`);
   }
 });
 
